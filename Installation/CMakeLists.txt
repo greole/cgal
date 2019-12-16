@@ -43,21 +43,21 @@ if ( CGAL_BRANCH_BUILD )
   message( STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}" )
 
   # list packages
-  file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/*")
+  file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CGAL_DIR} "${CGAL_DIR}/*")
   list(SORT CGAL_CONFIGURED_PACKAGES)
   list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES copyright CMakeLists.txt .svn .git)
 
   # detect and remove not existing package-directories
   foreach (package ${CGAL_CONFIGURED_PACKAGES})
-    if (NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${package}")
+    if (NOT IS_DIRECTORY "${CGAL_DIR}/${package}")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
-    elseif(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${package}/package_info/${package}/maintainer")
+    elseif(NOT EXISTS "${CGAL_DIR}/${package}/package_info/${package}/maintainer")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
     endif()
   endforeach()
 
   find_program(CGAL_CREATE_CMAKE_SCRIPT cgal_create_cmake_script
-               HINT ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/scripts
+               HINT ${CGAL_DIR}/Scripts/scripts
 	       DOC "Script cgal_create_cmake_script, that creates CMakeLists.txt files"
 	       NO_DEFAULT_PATH
 	       NO_CMAKE_ENVIRONMENT_PATH)
@@ -70,14 +70,14 @@ if ( CGAL_BRANCH_BUILD )
   set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES})
   set(CGAL_CONFIGURED_PACKAGES)
   foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
-    list(APPEND CGAL_CONFIGURED_PACKAGES "${CMAKE_CURRENT_SOURCE_DIR}/${package}")
+    list(APPEND CGAL_CONFIGURED_PACKAGES "${CGAL_DIR}/${package}")
   endforeach()
 
 
-  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Installation" CACHE INTERNAL "Directory containing the Installation package")
-  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Maintenance" CACHE INTERNAL "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Core" CACHE INTERNAL "Directory containing the Core package")
-  set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/GraphicsView" CACHE INTERNAL "Directory containing the GraphicsView package")
+  set(CGAL_INSTALLATION_PACKAGE_DIR "${CGAL_DIR}/Installation" CACHE INTERNAL "Directory containing the Installation package")
+  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CGAL_DIR}/Maintenance" CACHE INTERNAL "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CGAL_DIR}/Core" CACHE INTERNAL "Directory containing the Core package")
+  set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CGAL_DIR}/GraphicsView" CACHE INTERNAL "Directory containing the GraphicsView package")
 
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
@@ -86,7 +86,7 @@ if ( CGAL_BRANCH_BUILD )
 else ( CGAL_BRANCH_BUILD )
 
   # get release name
-  file(TO_CMAKE_PATH ${CMAKE_CURRENT_SOURCE_DIR} CMAKE_SOURCE_CDIR)
+  file(TO_CMAKE_PATH ${CGAL_DIR} CMAKE_SOURCE_CDIR)
   string(REGEX REPLACE "^/" "" CMAKE_SOURCE_DDIR ${CMAKE_SOURCE_CDIR})
   string(REPLACE "/" ";" CMAKE_SOURCE_PDIR ${CMAKE_SOURCE_DDIR})
   list(GET CMAKE_SOURCE_PDIR -1 CGAL_RELEASE_NAME)
@@ -95,12 +95,12 @@ else ( CGAL_BRANCH_BUILD )
   set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_RELEASE_NAME})
 
   # list packages
-  set(CGAL_CONFIGURED_PACKAGES "${CMAKE_CURRENT_SOURCE_DIR}")
+  set(CGAL_CONFIGURED_PACKAGES "${CGAL_DIR}")
 
-  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Installation package")
-  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Core package")
-  set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Directory containing the GraphicsView package")
+  set(CGAL_INSTALLATION_PACKAGE_DIR "${CGAL_DIR}" CACHE INTERNAL "Directory containing the Installation package")
+  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CGAL_DIR}" CACHE INTERNAL "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CGAL_DIR}" CACHE INTERNAL "Directory containing the Core package")
+  set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CGAL_DIR}" CACHE INTERNAL "Directory containing the GraphicsView package")
 
   # Enable testing with BUILD_TESTING
   option(BUILD_TESTING "Build the testing tree." OFF)
@@ -116,7 +116,7 @@ endif (CGAL_BRANCH_BUILD )
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
-if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Documentation")
+if(IS_DIRECTORY "${CGAL_DIR}/Documentation")
   # Rescope CGAL_CONFIGURED_PACKAGES_NAMES
   # We need this variable in the Doxygen configuration process. Reset it
   # and change the scope to the parent scope.
@@ -246,7 +246,7 @@ if ( CGAL_BRANCH_BUILD )
 
 else()
 
-  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" OR NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/CGAL/version.h")
+  if (NOT EXISTS "${CGAL_DIR}/VERSION" OR NOT EXISTS "${CGAL_DIR}/include/CGAL/version.h")
     message(FATAL_ERROR "File VERSION or include/CGAL/version.h are missing, required by release-build.")
   endif()
 
@@ -254,7 +254,7 @@ else()
   # Read and parse CGAL version number from VERSION file
   #
 
-  file( READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" CGAL_VERSION )
+  file( READ "${CGAL_DIR}/VERSION" CGAL_VERSION )
   # Comment from Laurent Rineau, 2012/06/28:
   #   file(READ ..) should be replace by file(STRINGS ..), and then we take
   #   the first line. That would avoid parsing errors when the VERSION file
@@ -901,8 +901,8 @@ endif()
 file(GLOB scripts "scripts/*")
 list(SORT scripts)
 list(REMOVE_ITEM scripts 
-  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_assertions.sh 
-  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_cmake_script_with_options)
+  ${CGAL_DIR}/scripts/cgal_create_assertions.sh 
+  ${CGAL_DIR}/scripts/cgal_create_cmake_script_with_options)
 install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
@@ -991,7 +991,7 @@ if ( NOT RUNNING_CGAL_AUTO_TEST )
 
   add_programs(examples examples OFF )
   add_programs(demo     demos    OFF )
-  if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test")
+  if(IS_DIRECTORY "${CGAL_DIR}/test")
     add_programs(test     tests    OFF )
   endif()
 endif()
@@ -1180,7 +1180,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     # Build the doc
     set(DOC_DIR "${CMAKE_BINARY_DIR}/build_doc")
     file(MAKE_DIRECTORY "${DOC_DIR}")
-    execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doc"
+    execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CGAL_DIR}/Documentation/doc"
         WORKING_DIRECTORY "${DOC_DIR}"
         )
     execute_process(COMMAND "${CMAKE_COMMAND}" --build . --target "doc"
@@ -1189,7 +1189,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   #Get the list of the documented headers
 
   file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
-  file(GLOB example_files RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/" "${CMAKE_CURRENT_SOURCE_DIR}/*/examples/*/*.cpp")
+  file(GLOB example_files RELATIVE "${CGAL_DIR}/" "${CGAL_DIR}/*/examples/*/*.cpp")
   find_program(AWK awk)
   set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
   message("listing headers from html files")
@@ -1203,7 +1203,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   endforeach()
   message("listing headers from examples files")
   foreach(f ${example_files})
-    execute_process(COMMAND "${AWK}" "${awk_arguments}" "${CMAKE_CURRENT_SOURCE_DIR}/${f}"
+    execute_process(COMMAND "${AWK}" "${awk_arguments}" "${CGAL_DIR}/${f}"
       OUTPUT_VARIABLE tmp_list)
     if (NOT "${tmp_list}" STREQUAL "")
       string(REPLACE "\n" ";" tmp_list ${tmp_list})
@@ -1220,7 +1220,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   else()
     set(has_list_of_documented_headers FALSE)
   endif()
-  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
+  include(${CGAL_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_whitelisted_headers)
     message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
     ## Loop on package and headers
@@ -1231,17 +1231,17 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     #get build dir for removal from deps
     get_filename_component(BUILD_DIR ${CMAKE_BINARY_DIR} NAME)
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
-      if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
+      if(EXISTS ${CGAL_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
         if(has_list_of_documented_headers AND POLICY CMP0057)
           # Then recurse2
           file(GLOB_RECURSE ${package}_HEADERS
-            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+            RELATIVE "${CGAL_DIR}/../${package}/include"
+            "${CGAL_DIR}/../${package}/include/CGAL/*.h*")
         else() # do not recurse
           file(GLOB ${package}_HEADERS
-            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+            RELATIVE "${CGAL_DIR}/../${package}/include"
+            "${CGAL_DIR}/../${package}/include/CGAL/*.h*")
         endif()
         list(SORT ${package}_HEADERS)
         foreach(header ${${package}_HEADERS})
@@ -1284,7 +1284,7 @@ LEDA_FOUND is false.")
               UNIX_COMMAND
               "${CMAKE_CXX_COMPILER} ${compile_options_str}
 ${include_options_str} -x c++ ${flag} -H \
-${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+${CGAL_DIR}/../${package}/include/${header}"
               # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
               # depends on RS.
               )
@@ -1293,7 +1293,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               UNIX_COMMAND
               "${CMAKE_CXX_COMPILER} ${compile_options_str}
 ${include_options_str} -x c++ ${flag} \
-${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+${CGAL_DIR}/../${package}/include/${header}"
               # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
               # depends on RS.
               )
@@ -1305,7 +1305,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               "-DCMD:STRING=${CMD}"
               "-DCMD2:STRING=${CMD2}"
               -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
-              DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
+              DEPENDS ${CGAL_DIR}/../${package}/include/${header}
               DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
               VERBATIM
               COMMENT "Check header ${package}/include/${header}"
@@ -1374,8 +1374,8 @@ the headers checks)\n")
   endif()
 endif( CGAL_BRANCH_BUILD )
 
-if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
+if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CGAL_DIR}/doc")
   # in a non-branch build this is the top-level CMakeLists.txt
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc")
+  add_subdirectory("${CGAL_DIR}/doc")
 endif()
 

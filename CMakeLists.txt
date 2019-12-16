@@ -10,13 +10,15 @@ export(PACKAGE CGAL)
 
 set( CGAL_BRANCH_BUILD ON CACHE INTERNAL "Create CGAL from a Git branch" FORCE)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/Installation/cmake/modules/CGAL_SCM.cmake)
-CGAL_detect_git(${CMAKE_CURRENT_SOURCE_DIR})
+set(CGAL_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+include(${CGAL_DIR}/Installation/cmake/modules/CGAL_SCM.cmake)
+CGAL_detect_git(${CGAL_DIR})
 
 function(CGAL_error_if_detect_in_source_build)
   # If in a Git repository, forbid in-source builds
-  get_filename_component(srcdir "${CMAKE_CURRENT_SOURCE_DIR}" REALPATH)
-  get_filename_component(bindir "${CMAKE_CURRENT_BINARY_DIR}" REALPATH)
+  get_filename_component(srcdir "${CGAL_DIR}" REALPATH)
+  get_filename_component(bindir "${CGAL_DIR}" REALPATH)
   if("${srcdir}" STREQUAL "${bindir}")
     message(FATAL_ERROR [=[
 ############
@@ -54,7 +56,7 @@ add_subdirectory( Documentation/doc)
 
 if(NOT TARGET uninstall)
   configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in
+      ${CGAL_DIR}/cmake_uninstall.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
       IMMEDIATE @ONLY)
 
