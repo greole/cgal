@@ -18,7 +18,7 @@ CGAL_detect_git(${CGAL_DIR})
 function(CGAL_error_if_detect_in_source_build)
   # If in a Git repository, forbid in-source builds
   get_filename_component(srcdir "${CGAL_DIR}" REALPATH)
-  get_filename_component(bindir "${CGAL_DIR}" REALPATH)
+  get_filename_component(bindir "${CMAKE_BINARY_DIR}" REALPATH)
   if("${srcdir}" STREQUAL "${bindir}")
     message(FATAL_ERROR [=[
 ############
